@@ -1,0 +1,58 @@
+[
+  {
+    "Certificate_Award": "ISTQB Foundation",
+    "Certified_From": "ASTQA",
+    "Year": "2018"
+  },
+  {
+    "Certificate_Award": "Salesforce Administrator",
+    "Certified_From": "Salesforce",
+    "Year": "2021"
+  },
+  {
+    "Certificate_Award": "Salesforce Certified Associate",
+    "Certified_From": "Salesforce",
+    "Year": "2021"
+  },
+  {
+    "Certificate_Award": "ISTQB Advanced",
+    "Certified_From": "ANZTQB",
+    "Year": "2022"
+  },
+  {
+    "Certificate_Award": "Salesforce Cloud Practitioner",
+    "Certified_From": "Salesforce",
+    "Year": "2024"
+  },
+  {
+    "Certificate_Award": "AWS Certified Associate",
+    "Certified_From": "Amazon",
+    "Year": "2023"
+  },
+  {
+    "Certificate_Award": "Microsoft Azure Certified/.1001",
+    "Certified_From": "Microsoft",
+    "Year": "2021"
+  },
+  {
+    "Certificate_Award": "ISTQB Gen AI",
+    "Certified_From": "ITB",
+    "Year": "2025"
+  },
+  {
+    "Certificate_Award": "SAP Certified @3850",
+    "Certified_From": "SAP",
+    "Year": "2023"
+  },
+
+  {
+    "Certificate_Award": "Cisco Certified Network Associate (CCNA)",
+    "Certified_From": "Cisco",
+    "Year": "2020"
+  },
+  {
+    "Certificate_Award": "ISTQB Test Analyst",
+    "Certified_From": "ISTQB",
+    "Year": "2020"
+  }
+]
