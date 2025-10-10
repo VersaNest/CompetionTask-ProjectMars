@@ -98,6 +98,11 @@ namespace Selenium_ProjectMars.Pages
             var rows = waitObj.WaitUntilVisibleAll(rowLocator);
             return rows.ToList();
         }
+
+        public void cancelSelection()
+        {
+            ClickButton(By.XPath("//input[@value='Cancel']"));
+        }
         public void DeleteAllRows(By tableLocator)
         {
             IReadOnlyCollection<IWebElement> rows;

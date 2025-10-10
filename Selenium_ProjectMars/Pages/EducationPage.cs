@@ -182,6 +182,7 @@ namespace Selenium_ProjectMars.Pages
 
      
 
+
         public void DeleteAllEducations()
         {
 

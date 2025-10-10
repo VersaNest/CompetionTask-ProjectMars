@@ -176,6 +176,10 @@ namespace Selenium_ProjectMars.Pages
             return "Original";
         }
        
+        public void cancelCertification()
+        {
+            basePage.ClickButton(By.XPath("//input[@value='Cancel']"));
+        }
 
         public void DeleteAllCertifications()
         {

@@ -3,62 +3,49 @@ using OpenQA.Selenium;
 using Selenium_ProjectMars.Models;
 using Selenium_ProjectMars.Pages;
 using Selenium_ProjectMars.Utilities;
-using SeleniumProjectMars.Utilities;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Selenium_ProjectMars.Tests
 {
+    [TestFixture]
     public class LoginTests
     {
-        private BaseTest baseTest;       
-        private IWebDriver driver;        
+        private BaseTest baseTest;
+        private IWebDriver driver;
         private LoginPage loginPage;
-        private List<LoginModel> loginData;
         private BasePage basePage;
-        protected AppConfigModel config;
-
-        [OneTimeSetUp]
-        public void GlobalSetup()
-        {
-            baseTest = new BaseTest();
-
-
-            config = JsonDataReader.LoadJson<AppConfigModel>("TestData\\AppConfig.json");
-            ExtentReportManager.InitReport(config);
-        }
+        private List<LoginModel> validLoginData;
+        private List<LoginModel> invalidLoginData;
 
         [SetUp]
-
-        public void SetUp()
+        public void Setup()
         {
             baseTest = new BaseTest();
-            baseTest.testSetUp();
-            driver = baseTest.Driver;
+            baseTest.TestSetup(); // start driver and create test
+            driver = baseTest.driver;
 
             basePage = new BasePage(driver);
             loginPage = new LoginPage(driver);
 
-            loginData = JsonDataReader.LoadJson<List<LoginModel>>("TestData\\LoginData.json");
+            
         }
 
-
+     
 
         [Test]
-
         public void VerifySuccessfulLogin()
         {
+
+            validLoginData = JsonDataReader.LoadJson<List<LoginModel>>("TestData\\Login_Data\\ValidLoginData.json");
+
             loginPage.SignFromMain();
             Assert.That(loginPage.LoginModalVisible(), Is.True, "Login modal did not appear!");
 
-            var validLogin = loginData[0];
-            loginPage.UserLogin(validLogin.Email, validLogin.Password);
+            
+            loginPage.UserLogin(validLoginData[0].Email, validLoginData[0].Password);
 
             string loggedUser = loginPage.VerifyUser();
-            Assert.That(loggedUser.Contains(validLogin.FirstName), "Correct user not logged in");
+            Assert.That(loggedUser.Contains(validLoginData[0].FirstName), "Correct user not logged in");
         }
 
         [Test]
@@ -67,35 +54,27 @@ namespace Selenium_ProjectMars.Tests
             loginPage.SignFromMain();
             Assert.That(loginPage.LoginModalVisible(), Is.True, "Login modal did not appear!");
 
-            var validLogin = loginData[0];
-            var invalidLogin = loginData[1];
-            loginPage.UserLogin(invalidLogin.Email, invalidLogin.Password);
 
-            loginPage.EnterInvalidVerification(validLogin.Email);
 
-            String displayedMessage = basePage.RetreiveMessage();
-            
-            Assert.That(displayedMessage, Is.EqualTo("Email Verification Sent"), "Confirmation message for verification email not correct");
+            validLoginData = JsonDataReader.LoadJson<List<LoginModel>>("TestData\\Login_Data\\ValidLoginData.json");
+
+            invalidLoginData = JsonDataReader.LoadJson<List<LoginModel>>("TestData\\Login_Data\\InvalidLoginData.json");
+
+            loginPage.UserLogin(invalidLoginData[0].Email, invalidLoginData[0].Password);
+
+            loginPage.EnterInvalidVerification(validLoginData[0].Email);
+
+            string displayedMessage = basePage.RetreiveMessage();
+            Assert.That(displayedMessage, Is.EqualTo("Email Verification Sent"), "Confirmation message incorrect");
 
             loginPage.SignFromMain();
-            loginPage.UserLogin(validLogin.Email, validLogin.Password);
+            loginPage.UserLogin(validLoginData[0].Email, validLoginData[0].Password);
         }
-
 
         [TearDown]
-        public void TestDataCleanUp()
+        public void Cleanup()
         {
-
-
-            baseTest.testCleanUp();
+            baseTest.TestCleanUp();
         }
-
-        [OneTimeTearDown]
-        public void GlobalCleanup()
-        {
-
-            ExtentReportManager.FlushReport();
-        }
-
     }
 }

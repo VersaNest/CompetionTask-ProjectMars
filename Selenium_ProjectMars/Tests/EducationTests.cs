@@ -15,62 +15,51 @@ namespace Selenium_ProjectMars.Tests
     [TestFixture]
     public class EducationTests
     {
-        private BaseTest baseTest;
+       
         private IWebDriver driver;
         private LoginPage loginPage;
         private BasePage basePage;
         private EducationPage educationPage;
-        protected AppConfigModel config;
+        private BaseTest baseTest;
+
 
         private List<LoginModel> loginData;
-        private List<EducationModel> educationData;
-        private List<UpdatedEducationModel> updatedEducationData;
+      
+
+        private List<EducationModel> addEduData;
+        private List<EducationModel> cancelEduData;
+        private List<EducationModel> deleteEduData;
+        private List<EducationModel> dupEduData;
+        private List<EducationModel> emptyEduData;
+        private List<EducationModel> updateEduData;
+        private List<EducationModel> newEduData;
+        private List<EducationModel> dupEduDetails;
 
         private string expectedMessage;
         private string displayedMessage;
 
         int addCount = 0;
 
-        [OneTimeSetUp]
-        public void GlobalSetup()
-        {
-            baseTest = new BaseTest();
-
-
-            config = JsonDataReader.LoadJson<AppConfigModel>("TestData\\AppConfig.json");
-            ExtentReportManager.InitReport(config);
-        }
+       
 
         [SetUp]
 
         public void TestSetUp()
         {
             baseTest = new BaseTest();
-            baseTest.testSetUp();
-            driver = baseTest.Driver;
+            baseTest.TestSetup(); // start driver and create test
+            driver = baseTest.driver;
 
             loginPage = new LoginPage(driver);
             basePage = new BasePage(driver);
             educationPage = new EducationPage(driver);
 
-            loginData = JsonDataReader.LoadJson<List<LoginModel>>("TestData\\LoginData.json");
-            educationData = JsonDataReader.LoadJson<List<EducationModel>>("TestData\\EducationDetails.json");
+            loginData = JsonDataReader.LoadJson<List<LoginModel>>("TestData\\Login_Data\\ValidLoginData.json");
+            
 
             loginPage.SignFromMain();
             var validLogin = loginData[0];
             loginPage.UserLogin(validLogin.Email, validLogin.Password);
-        }
-
-        //This adds only 5 educations from the json file to verify update, delete and duplicate education functionalities
-        public void AddFiveEducations()
-        {
-            foreach (var newEdu in educationData)
-            {
-                if (addCount >= 5) break;
-                educationPage.AddNewEducation(newEdu.College_University_Name, newEdu.Country, newEdu.Title, newEdu.Degree, newEdu.Year_of_graduation);
-                basePage.CloseConfirmationMessage();
-                addCount++;
-            }
         }
 
         [Test]
@@ -81,8 +70,9 @@ namespace Selenium_ProjectMars.Tests
          */
         public void VerifyAddEducation()
         {
+            addEduData = JsonDataReader.LoadJson<List<EducationModel>>("TestData\\Education_Data\\AddEducationsData.json");
 
-            foreach (var newEdu in educationData)
+            foreach (var newEdu in addEduData)
             {
                 educationPage.AddNewEducation(newEdu.College_University_Name, newEdu.Country, newEdu.Title, newEdu.Degree, newEdu.Year_of_graduation);
 
@@ -114,16 +104,19 @@ namespace Selenium_ProjectMars.Tests
         [Test]
         public void VerifyCancelButton()
         {
-            educationPage.AddNewEducation(educationData[2].College_University_Name, educationData[2].Country,
-                educationData[2].Title, educationData[2].Degree, educationData[2].Year_of_graduation);
+
+            cancelEduData = JsonDataReader.LoadJson<List<EducationModel>>("TestData\\Education_Data\\CancelEducationsData.json");
+
+            educationPage.AddNewEducation(cancelEduData[0].College_University_Name, cancelEduData[0].Country,
+                cancelEduData[0].Title, cancelEduData[0].Degree, cancelEduData[0].Year_of_graduation);
             basePage.CloseConfirmationMessage();
 
-            educationPage.EnterEducationDetails(educationData[1].College_University_Name, educationData[1].Country,
-                educationData[1].Title, educationData[1].Degree, educationData[1].Year_of_graduation);
+            educationPage.EnterEducationDetails(cancelEduData[1].College_University_Name, cancelEduData[1].Country,
+                cancelEduData[1].Title, cancelEduData[1].Degree, cancelEduData[1].Year_of_graduation);
             basePage.ClickButton(By.XPath("//input[@value='Cancel']"));
 
             string displayedDegreeName = basePage.VerifyDetailsDisplayed(4);
-            Assert.That(displayedDegreeName, Is.Not.EqualTo(educationData[1].Degree),
+            Assert.That(displayedDegreeName, Is.Not.EqualTo(cancelEduData[1].Degree),
                 "Education degree has been added even after cancelling");
 
         }
@@ -136,24 +129,48 @@ namespace Selenium_ProjectMars.Tests
 
         public void VerifyEmptyFieldValidation()
         {
-            educationPage.AddNewEducation("", "",
-                educationData[1].Title, educationData[1].Degree, educationData[1].Year_of_graduation);
-            displayedMessage = basePage.RetreiveMessage();
-            expectedMessage = "Education has been added";
 
-            Assert.That(displayedMessage, Is.EqualTo(expectedMessage),
-                "Confirmation Message not displayed as expected");
+            emptyEduData = JsonDataReader.LoadJson<List<EducationModel>>("TestData\\Education_Data\\EmptyEducationsFieldData.json");
+
+            foreach (var newEdu in emptyEduData)
+            {
+                educationPage.AddNewEducation(newEdu.College_University_Name, newEdu.Country,
+                    newEdu.Title, newEdu.Degree, newEdu.Year_of_graduation);
+
+                displayedMessage = basePage.RetreiveMessage();
+                expectedMessage = "Please enter all the fields";
+
+                Assert.That(displayedMessage, Is.EqualTo(expectedMessage),
+                       "Confirmation Message not displayed as expected");
+                basePage.CloseConfirmationMessage();
+                basePage.cancelSelection();
+
+            }
         }
-
-        //Test case to verify user able to delete any education from profile
+         //Test case to verify user able to delete any education from profile
 
         [Test]
         public void VerifyDeleteEducation()
         {
-            AddFiveEducations();
+
+            deleteEduData = JsonDataReader.LoadJson<List<EducationModel>>("TestData\\Education_Data\\DeleteEducationsData.json");
 
             expectedMessage = "Education entry successfully removed";
-            displayedMessage = educationPage.DeleteEducation(educationData[2].Degree);
+
+            foreach (var newEdu in deleteEduData)
+            {
+                educationPage.AddNewEducation(newEdu.College_University_Name, newEdu.Country,
+                    newEdu.Title, newEdu.Degree, newEdu.Year_of_graduation);
+
+         
+                basePage.CloseConfirmationMessage();
+        
+
+            }
+
+            displayedMessage = educationPage.DeleteEducation(deleteEduData[2].Degree);
+
+
             Assert.That(displayedMessage, Is.EqualTo(expectedMessage), "Education not found to delete");
             basePage.CloseConfirmationMessage();
 
@@ -164,21 +181,34 @@ namespace Selenium_ProjectMars.Tests
         [Test]
         public void VerifyUpdateEducation()
         {
-            updatedEducationData = JsonDataReader.LoadJson<List<UpdatedEducationModel>>("TestData\\UpdatedEducationDetails.json");
+            updateEduData = JsonDataReader.LoadJson<List<EducationModel>>("TestData\\Education_Data\\UpdateEducationsData.json");
+            newEduData = JsonDataReader.LoadJson<List<EducationModel>>("TestData\\Education_Data\\NewEducationDetails.json");
 
-            AddFiveEducations();
+            foreach (var newEdu in updateEduData)
+            {
+                educationPage.AddNewEducation(newEdu.College_University_Name, newEdu.Country,
+                    newEdu.Title, newEdu.Degree, newEdu.Year_of_graduation);
 
-            displayedMessage = educationPage.UpdateEducation(educationData[1].Degree, updatedEducationData[0].College_University_Name,
-                updatedEducationData[0].Country, updatedEducationData[0].Title, updatedEducationData[0].Degree, 
-                updatedEducationData[0].Year_of_graduation);
+
+                basePage.CloseConfirmationMessage();
+
+
+            }
+
+
+            displayedMessage = educationPage.UpdateEducation(updateEduData[1].Degree, newEduData[0].College_University_Name,
+                newEduData[0].Country, newEduData[0].Title, newEduData[0].Degree,
+                newEduData[0].Year_of_graduation);
+
             expectedMessage = "Education as been updated";
+
             Assert.That(displayedMessage, Is.EqualTo(expectedMessage), "Confirmation Message not displayed as expected");
 
 
-            string updatedEdu = educationPage.GetUpdatedEduDetails(updatedEducationData[0].Degree);
+            string updatedEdu = educationPage.GetUpdatedEduDetails(newEduData[0].Degree);
 
 
-            Assert.That(updatedEdu, Is.EqualTo(updatedEducationData[0].Degree), "Education not updated as required");
+            Assert.That(updatedEdu, Is.EqualTo(newEduData[0].Degree), "Education not updated as required");
             educationPage.WaitUntilEducationTabContentVisible();
         }
 
@@ -189,61 +219,70 @@ namespace Selenium_ProjectMars.Tests
 
         public void VerifyAddExistingEducation()
         {
-            AddFiveEducations();
+            dupEduData = JsonDataReader.LoadJson<List<EducationModel>>("TestData\\Education_Data\\DupCheckEducationsData.json");
+            dupEduDetails = JsonDataReader.LoadJson<List<EducationModel>>("TestData\\Education_Data\\DupEducationDetails.json");
 
-
-            string duplicateStatus = educationPage.CheckDuplicateEdu(educationData[2].College_University_Name, 
-                educationData[2].Country, educationData[2].Title, educationData[2].Degree, 
-                educationData[2].Year_of_graduation);
-
-            educationPage.AddNewEducation(educationData[2].College_University_Name,
-                educationData[2].Country, educationData[2].Title, educationData[2].Degree,
-                educationData[2].Year_of_graduation);
-
-
-            displayedMessage = basePage.RetreiveMessage();
-
-            if (duplicateStatus == "All duplicate")
+            foreach (var newEdu in dupEduData)
             {
-                expectedMessage = "This information is already exist.";
+                educationPage.AddNewEducation(newEdu.College_University_Name, newEdu.Country,
+                    newEdu.Title, newEdu.Degree, newEdu.Year_of_graduation);
 
-                Assert.That(displayedMessage, Is.EqualTo(expectedMessage), "Confirmation Message not displayed as expected");
-            }
-            else if (duplicateStatus == "First four duplicate")
-            {
-                expectedMessage = "Duplicated data";
 
-                Assert.That(displayedMessage, Is.EqualTo(expectedMessage), "Confirmation Message not displayed as expected");
-            }
-            else
-            {
-                expectedMessage = "Education has been added";
+                basePage.CloseConfirmationMessage();
 
-                Assert.That(displayedMessage, Is.EqualTo(expectedMessage), "Confirmation Message not displayed as expected");
+
             }
 
-            basePage.CloseConfirmationMessage();
+            foreach (var newCert in dupEduDetails)
+            {
+                string duplicateStatus = educationPage.CheckDuplicateEdu(newCert.College_University_Name,
+                newCert.Country, newCert.Title, newCert.Degree,
+                newCert.Year_of_graduation);
+
+                educationPage.AddNewEducation(newCert.College_University_Name,
+                    newCert.Country, newCert.Title, newCert.Degree,
+                    newCert.Year_of_graduation);
+
+
+                displayedMessage = basePage.RetreiveMessage();
+
+                if (duplicateStatus == "All duplicate")
+                {
+                    expectedMessage = "This information is already exist.";
+
+                    Assert.That(displayedMessage, Is.EqualTo(expectedMessage), "Confirmation Message not displayed as expected");
+                    basePage.cancelSelection();
+                }
+                else if (duplicateStatus == "First four duplicate")
+                {
+                    expectedMessage = "Duplicated data";
+
+                    Assert.That(displayedMessage, Is.EqualTo(expectedMessage), "Confirmation Message not displayed as expected");
+                    basePage.cancelSelection();
+                }
+                else
+                {
+                    expectedMessage = "Education has been added";
+
+                    Assert.That(displayedMessage, Is.EqualTo(expectedMessage), "Confirmation Message not displayed as expected");
+                }
+
+                basePage.CloseConfirmationMessage();
+            }
+
+
+                
 
 
 
         }
-
-
 
         [TearDown]
-        public void TestDataCleanUp()
+        public void Cleanup()
         {
-
-
-            baseTest.testCleanUp();
+            baseTest.TestCleanUp();
         }
 
-        [OneTimeTearDown]
-        public void GlobalCleanup()
-        {
-        
-            ExtentReportManager.FlushReport();
-        }
 
     }
 }

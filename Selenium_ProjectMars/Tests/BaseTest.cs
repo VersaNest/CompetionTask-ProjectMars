@@ -1,34 +1,19 @@
 ﻿using NUnit.Framework;
 using OpenQA.Selenium;
-using Selenium_ProjectMars.Models;
 using Selenium_ProjectMars.Pages;
 using Selenium_ProjectMars.Utilities;
 using SeleniumProjectMars.Utilities;
-
 
 namespace Selenium_ProjectMars.Tests
 {
     public class BaseTest
     {
-        protected static IWebDriver driver;
-        protected AppConfigModel config;
+        public IWebDriver driver;
 
-       
-        public IWebDriver Driver => driver;
-        public AppConfigModel Config => config;
-
-        [OneTimeSetUp]
-        public void GlobalSetup()
+        public void TestSetup()
         {
-            config = JsonDataReader.LoadJson<AppConfigModel>("TestData\\AppConfig.json");
-            ExtentReportManager.InitReport(config);
-        }
-
-        [SetUp]
-        public void testSetUp()
-        {
-            
-            config = JsonDataReader.LoadJson<AppConfigModel>("TestData\\AppConfig.json");
+            // Use config loaded in GlobalSetup
+            var config = GlobalSetup.config;
 
             driver = DriverSetup.StartDriver();
             driver.Manage().Window.Maximize();
@@ -37,8 +22,7 @@ namespace Selenium_ProjectMars.Tests
             ExtentReportManager.CreateTest(TestContext.CurrentContext.Test.Name);
         }
 
-        [TearDown]
-        public void testCleanUp()
+        public void TestCleanUp()
         {
             var status = TestContext.CurrentContext.Result.Outcome.Status;
             var testName = TestContext.CurrentContext.Test.Name;
@@ -48,15 +32,9 @@ namespace Selenium_ProjectMars.Tests
                 string screenshotPath = ScreenshotSetup.TakeScreenshot(driver, testName);
 
                 if (status == NUnit.Framework.Interfaces.TestStatus.Failed)
-                {
-                   
-                   
                     ExtentReportManager.LogFail("Test Failed", screenshotPath);
-                }
                 else
-                {
                     ExtentReportManager.LogPass("Test Passed", screenshotPath);
-                }
             }
             catch (Exception ex)
             {
@@ -75,17 +53,9 @@ namespace Selenium_ProjectMars.Tests
                 educationPage.WaitUntilEducationTabContentVisible();
                 educationPage.DeleteAllEducations();
 
-
-                DriverSetup.QuitDriver();
+                driver.Quit();
                 driver.Dispose();
             }
-        }
-
-        [OneTimeTearDown]
-        public void GlobalCleanup()
-        {
-           
-            ExtentReportManager.FlushReport();
         }
     }
 }

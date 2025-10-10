@@ -12,47 +12,48 @@ namespace Selenium_ProjectMars.Tests
     [TestFixture]
     public class CertificationTests
     {
-        private BaseTest baseTest;       
+              
         private IWebDriver driver;        
         private LoginPage loginPage;
         private BasePage basePage;
         private CertificationPage certificationPage;
-        protected AppConfigModel config;
+        private BaseTest baseTest;
+
 
         private List<LoginModel> loginData;
-        private List<CertificationModel> certificationData;
-        private List<UpdatedCertificationModel> updatedCertificationData;
+     
+        private List<CertificationModel> addCertData;
+        private List<CertificationModel> cancelCertData;
+        private List<CertificationModel> deleteCertData;
+        private List<CertificationModel> dupCertData;
+        private List<CertificationModel> emptyCertData;
+        private List<CertificationModel> updateCertData;
+        private List<CertificationModel> newCertData;
+        private List<CertificationModel> dupCertDetails;
 
         private string expectedMessage;
         private string displayedMessage;
 
-        int addCount = 0;
+       
 
-        [OneTimeSetUp]
-        public void GlobalSetup()
-        {
-            baseTest = new BaseTest();
-
-
-            config = JsonDataReader.LoadJson<AppConfigModel>("TestData\\AppConfig.json");
-            ExtentReportManager.InitReport(config);
-        }
+       
 
         [SetUp]
 
         public void TestSetUp()
         {
 
+
             baseTest = new BaseTest();
-            baseTest.testSetUp();
-            driver = baseTest.Driver; 
+            baseTest.TestSetup(); // start driver and create test
+            driver = baseTest.driver;
 
             loginPage = new LoginPage(driver);
             basePage = new BasePage(driver);
             certificationPage = new CertificationPage(driver);
 
-            loginData = JsonDataReader.LoadJson<List<LoginModel>>("TestData\\LoginData.json");
-            certificationData = JsonDataReader.LoadJson<List<CertificationModel>>("TestData\\CertificationDetails.json");
+            loginData = JsonDataReader.LoadJson<List<LoginModel>>("TestData\\Login_Data\\ValidLoginData.json");
+            
 
             loginPage.SignFromMain();
             var validLogin = loginData[0];
@@ -60,17 +61,7 @@ namespace Selenium_ProjectMars.Tests
         }
 
         
-        //This adds only 5 certifications to verify update, delete and duplicate certification functionalities
-        public void AddFiveCertifications() 
-        {
-            foreach (var newCert in certificationData)
-            {
-                if (addCount >= 5) break;
-                certificationPage.AddNewCertification(newCert.Certificate_Award, newCert.Certified_From, newCert.Year);
-                basePage.CloseConfirmationMessage();
-                addCount++;
-            }
-        }
+       
        
 
         [Test]
@@ -81,8 +72,8 @@ namespace Selenium_ProjectMars.Tests
          */
         public void VerifyAddCertificaton()
         {
-
-            foreach (var newCert in certificationData)
+            addCertData = JsonDataReader.LoadJson<List<CertificationModel>>("TestData\\Certifications_Data\\AddCertificationsData.json");
+            foreach (var newCert in addCertData)
             {
                 certificationPage.AddNewCertification(newCert.Certificate_Award, newCert.Certified_From, newCert.Year);
 
@@ -108,44 +99,63 @@ namespace Selenium_ProjectMars.Tests
         [Test]
         public void VerifyCancelButton()
         {
-            certificationPage.AddNewCertification(certificationData[0].Certificate_Award,
-                certificationData[0].Certified_From, certificationData[0].Year);
+            cancelCertData = JsonDataReader.LoadJson<List<CertificationModel>>("TestData\\Certifications_Data\\CancelCertificationsData.json");
+            certificationPage.AddNewCertification(cancelCertData[0].Certificate_Award,
+                cancelCertData[0].Certified_From, cancelCertData[0].Year);
             basePage.CloseConfirmationMessage();
 
-            certificationPage.EnterNewCertificationDetails(certificationData[1].Certificate_Award,
-                certificationData[1].Certified_From, certificationData[1].Year);
-            basePage.ClickButton(By.XPath("//input[@value='Cancel']"));
+            certificationPage.EnterNewCertificationDetails(cancelCertData[1].Certificate_Award,
+                cancelCertData[1].Certified_From, cancelCertData[1].Year);
+            basePage.cancelSelection();
+
             string displayedCertName = basePage.VerifyDetailsDisplayed(1);
-            Assert.That(displayedCertName, Is.Not.EqualTo(certificationData[1].Certificate_Award),
+            Assert.That(displayedCertName, Is.Not.EqualTo(cancelCertData[1].Certificate_Award),
                 "Certification has been added even after cancelling");
 
         }
 
-        /*This test case validates the screenshot feature for error messages, as application shows error message 
-     * instead of confirmation when we leave the field blank while adding new certification*/
+        //Test case to verify user able to error message for empty field submission
         [Test]
 
         public void VerifyEmptyFieldValidation()
         {
-            certificationPage.AddNewCertification(certificationData[0].Certificate_Award,
-                "", certificationData[0].Year);
-            displayedMessage = basePage.RetreiveMessage();
-            expectedMessage = $"{certificationData[0].Certificate_Award} has been added to your certification";
-            
+            emptyCertData = JsonDataReader.LoadJson<List<CertificationModel>>("TestData\\Certifications_Data\\EmptyCertificationsFieldData.json");
 
-            Assert.That(displayedMessage, Is.EqualTo(expectedMessage), 
-                "Confirmation Message not displayed as expected");
+            foreach (var newCert in emptyCertData)
+            {
+                certificationPage.AddNewCertification(newCert.Certificate_Award, newCert.Certified_From, newCert.Year);
+                displayedMessage = basePage.RetreiveMessage();
+                expectedMessage = "Please enter Certification Name, Certification From and Certification Year";
+
+
+                Assert.That(displayedMessage, Is.EqualTo(expectedMessage),
+                    "Confirmation Message not displayed as expected");
+                basePage.CloseConfirmationMessage();
+                basePage.cancelSelection();
+
+            }
+            
+           
+           
         }
 
         //Test case to verify user able to delete any certification from profile
         [Test]
         public void VerifyDeleteCertification()
         {
-            AddFiveCertifications();
-
-            expectedMessage = $"{certificationData[1].Certificate_Award} has been deleted from your certification";
+        
+            deleteCertData = JsonDataReader.LoadJson<List<CertificationModel>>("TestData\\Certifications_Data\\DeleteCertificationsData.json");
             
-            displayedMessage = certificationPage.DeleteCertification(certificationData[1].Certificate_Award);
+            expectedMessage = $"{deleteCertData[1].Certificate_Award} has been deleted from your certification";
+
+            foreach (var newCert in deleteCertData)
+            {
+                certificationPage.AddNewCertification(newCert.Certificate_Award, newCert.Certified_From, newCert.Year);
+                basePage.CloseConfirmationMessage();
+
+            }
+
+            displayedMessage = certificationPage.DeleteCertification(deleteCertData[1].Certificate_Award);
             Assert.That(displayedMessage, Is.EqualTo(expectedMessage), "Certification not found to delete");
             basePage.CloseConfirmationMessage();
         }
@@ -154,23 +164,32 @@ namespace Selenium_ProjectMars.Tests
         [Test]
         public void VerifyUpdateCertification()
         {
-            updatedCertificationData = JsonDataReader.LoadJson<List<UpdatedCertificationModel>>("TestData\\UpdatedCertificationDetails.json");
+           updateCertData = JsonDataReader.LoadJson<List<CertificationModel>>("TestData\\Certifications_Data\\UpdateCertificationsData.json");
+           newCertData = JsonDataReader.LoadJson<List<CertificationModel>>("TestData\\Certifications_Data\\NewCertificationDetails.json");
+            foreach (var newCert in updateCertData)
+            {
+                certificationPage.AddNewCertification(newCert.Certificate_Award, newCert.Certified_From, newCert.Year);
+                basePage.CloseConfirmationMessage();
 
-            AddFiveCertifications();
+            }
 
-            displayedMessage = certificationPage.UpdateCertification(certificationData[1].Certificate_Award,
-                updatedCertificationData[0].Certificate_Award, updatedCertificationData[0].Certified_From,
-                updatedCertificationData[0].Year);
+            displayedMessage = certificationPage.UpdateCertification(updateCertData[2].Certificate_Award,
+                newCertData[0].Certificate_Award, newCertData[0].Certified_From,
+                newCertData[0].Year);
 
-            expectedMessage = $"{updatedCertificationData[0].Certificate_Award} has been updated to your certification";
+            expectedMessage = $"{newCertData[0].Certificate_Award} has been updated to your certification";
             Assert.That(displayedMessage, Is.EqualTo(expectedMessage),
               "Confirmation Message not displayed as expected");
 
-            string updatedCert = certificationPage.GetUpdatedCertDetails(updatedCertificationData[0].Certificate_Award);
+        
+
+            string updatedCert = certificationPage.GetUpdatedCertDetails(newCertData[0].Certificate_Award);
 
            
-            Assert.That(updatedCert, Is.EqualTo(updatedCertificationData[0].Certificate_Award), 
+            Assert.That(updatedCert, Is.EqualTo(newCertData[0].Certificate_Award), 
                 "Certification not updated as required");
+
+
             certificationPage.WaitUntilCertificationsTabContentVisible();
         }
 
@@ -179,54 +198,58 @@ namespace Selenium_ProjectMars.Tests
 
         public void VerifyAddExistingCertification()
         {
-            AddFiveCertifications();
+            dupCertData = JsonDataReader.LoadJson<List<CertificationModel>>("TestData\\Certifications_Data\\DupCheckCertificationsData.json");
+            dupCertDetails = JsonDataReader.LoadJson<List<CertificationModel>>("TestData\\Certifications_Data\\DupCertificationDetails.json");
 
-            string duplicateStatus = certificationPage.CheckDuplicateCert(certificationData[1].Certificate_Award, 
-                certificationData[1].Certified_From, certificationData[1].Year);
+            foreach (var newCert in dupCertData)
+            {
+                certificationPage.AddNewCertification(newCert.Certificate_Award, newCert.Certified_From, newCert.Year);
+                basePage.CloseConfirmationMessage();
 
-            certificationPage.AddNewCertification(certificationData[1].Certificate_Award,
-                certificationData[1].Certified_From, certificationData[1].Year);
+            }
+
+            foreach (var newCert in dupCertDetails)
+            {
+                string duplicateStatus = certificationPage.CheckDuplicateCert(newCert.Certificate_Award,
+                newCert.Certified_From, newCert.Year);
+
+                certificationPage.AddNewCertification(newCert.Certificate_Award, newCert.Certified_From, newCert.Year);
+
+                displayedMessage = basePage.RetreiveMessage();
+                
+
+                if (duplicateStatus == "All three duplicate")
+                {
+                    expectedMessage = "This information is already exist.";
+
+                    Assert.That(displayedMessage, Is.EqualTo(expectedMessage), "Confirmation Message not displayed as expected");
+                    basePage.cancelSelection();
+                }
+                else if (duplicateStatus == "First two duplicate")
+                {
+                    expectedMessage = "Duplicated data";
+
+                    Assert.That(displayedMessage, Is.EqualTo(expectedMessage), "Confirmation Message not displayed as expected");
+                    basePage.cancelSelection();
+                }
+                else
+                {
+                    expectedMessage = $"{newCert.Certificate_Award} has been added to your certification";
+
+                    Assert.That(displayedMessage, Is.EqualTo(expectedMessage), "Confirmation Message not displayed as expected");
+                }
+
+                basePage.CloseConfirmationMessage();
+
+            }
             
-            
-            displayedMessage = basePage.RetreiveMessage();
-
-            if (duplicateStatus == "All three duplicate")
-            {
-                expectedMessage = "This information is already exist.";
-
-                Assert.That(displayedMessage, Is.EqualTo(expectedMessage), "Confirmation Message not displayed as expected");
-            }
-            else if (duplicateStatus == "First two duplicate")
-            {
-                expectedMessage = "Duplicated data";
-
-                Assert.That(displayedMessage, Is.EqualTo(expectedMessage), "Confirmation Message not displayed as expected");
-            }
-            else
-            {
-                expectedMessage = $"{certificationData[1].Certificate_Award} has been added to your certification";
-               
-                Assert.That(displayedMessage, Is.EqualTo(expectedMessage), "Confirmation Message not displayed as expected");
-            }
-
-            basePage.CloseConfirmationMessage();
-     
         }
+
 
         [TearDown]
-        public void TestDataCleanUp()
+        public void Cleanup()
         {
-            
-            
-            baseTest.testCleanUp();
-
-        }
-
-        [OneTimeTearDown]
-        public void GlobalCleanup()
-        {
-         
-            ExtentReportManager.FlushReport();
+            baseTest.TestCleanUp();
         }
 
     }
