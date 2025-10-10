@@ -1,0 +1,39 @@
+[
+  
+  {
+    "College_University_Name": "University of California",
+    "Country": "United States",
+    "Title": "B.Tech",
+    "Degree": "Electronics and Communication Engineering",
+    "Year_of_graduation": "2021"
+  },
+  {
+    "College_University_Name": "Mahatma Gandhi University",
+    "Country": "India",
+    "Title": "B.A",
+    "Degree": "Arts and Communication",
+    "Year_of_graduation": "2011"
+  },
+  {
+    "College_University_Name": "Dubai University",
+    "Country": "United Arab Emirates",
+    "Title": "M.B.A",
+    "Degree": "Supply Chain Management",
+    "Year_of_graduation": "2024"
+  },
+  {
+    "College_University_Name": "Cambridge University",
+    "Country": "United Kingdom",
+    "Title": "PHD",
+    "Degree": "Human Psychology",
+    "Year_of_graduation": "2017"
+  },
+  {
+    "College_University_Name": "ontificia Universidad Católica de Chile",
+    "Country": "Chile",
+    "Title": "B.Sc",
+    "Degree": "Bachelor of Science in Biology",
+    "Year_of_graduation": "1995"
+  }
+
+]

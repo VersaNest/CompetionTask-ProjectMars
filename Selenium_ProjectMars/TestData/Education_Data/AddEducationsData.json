@@ -1,0 +1,87 @@
+[
+  {
+    "College_University_Name": "AUT",
+    "Country": "New Zealand",
+    "Title": "M.A",
+    "Degree": "Masters in IT Project Management",
+    "Year_of_graduation": "2024"
+  },
+  {
+    "College_University_Name": "University of Australia",
+    "Country": "Australia",
+    "Title": "B.A",
+    "Degree": "Bachelors in Computer Science",
+    "Year_of_graduation": "2020"
+  },
+  {
+    "College_University_Name": "University of California",
+    "Country": "United States",
+    "Title": "B.Tech",
+    "Degree": "Electronics and Communication Engineering",
+    "Year_of_graduation": "2021"
+  },
+  {
+    "College_University_Name": "Mahatma Gandhi University",
+    "Country": "India",
+    "Title": "B.A",
+    "Degree": "Arts and Communication",
+    "Year_of_graduation": "2011"
+  },
+  {
+    "College_University_Name": "Dubai University",
+    "Country": "United Arab Emirates",
+    "Title": "M.B.A",
+    "Degree": "Supply Chain Management",
+    "Year_of_graduation": "2024"
+  },
+  {
+    "College_University_Name": "Cambridge University",
+    "Country": "United Kingdom",
+    "Title": "PHD",
+    "Degree": "Human Psychology",
+    "Year_of_graduation": "2017"
+  },
+  {
+    "College_University_Name": "ontificia Universidad Católica de Chile",
+    "Country": "Chile",
+    "Title": "B.Sc",
+    "Degree": "Bachelor of Science in Biology",
+    "Year_of_graduation": "1995"
+  },
+  {
+    "College_University_Name": "University of Australia",
+    "Country": "Australia",
+    "Title": "B.Sc",
+    "Degree": "Bachelors in Computer Science",
+    "Year_of_graduation": "2001"
+  },
+  {
+    "College_University_Name": "AUT",
+    "Country": "New Zealand",
+    "Title": "BFA",
+    "Degree": "Finance Basics",
+    "Year_of_graduation": "2005"
+  },
+  {
+    "College_University_Name": "University of Japan",
+    "Country": "Japan",
+    "Title": "BFA",
+    "Degree": "Finance Management",
+    "Year_of_graduation": "2011"
+  },
+  {
+    "College_University_Name": "Lomonosov Moscow State University (MSU)",
+    "Country": "Russia",
+    "Title": "B.Sc",
+    "Degree": "Nursing Management",
+    "Year_of_graduation": "2010"
+  },
+  {
+    "College_University_Name": "California State University, San Bernardino",
+    "Country": "United States",
+    "Title": "B.Sc",
+    "Degree": "Bachelor of Science in Computer Science",
+    "Year_of_graduation": "2008"
+  }
+
+]

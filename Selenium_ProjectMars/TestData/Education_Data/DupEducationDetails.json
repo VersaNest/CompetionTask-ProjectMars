@@ -1,0 +1,41 @@
+[
+  {
+    "College_University_Name": "Mahatma Gandhi University",
+    "Country": "India",
+    "Title": "B.A",
+    "Degree": "Arts and Communication",
+    "Year_of_graduation": "2015"
+  },
+  {
+    "College_University_Name": "Dubai University",
+    "Country": "New Zealand",
+    "Title": "M.B.A",
+    "Degree": "Supply Chain Management",
+    "Year_of_graduation": "2024"
+  },
+  
+  {
+    "College_University_Name": "ontificia Universidad Católica de Chile",
+    "Country": "Chile",
+    "Title": "B.Sc",
+    "Degree": "Bachelor of Science in Biology",
+    "Year_of_graduation": "1995"
+  },
+ 
+  {
+    "College_University_Name": "University of Japan",
+    "Country": "Japan",
+    "Title": "BFA",
+    "Degree": "Finance Management",
+    "Year_of_graduation": "2011"
+  },
+  
+  {
+    "College_University_Name": "California State University, San Bernardino",
+    "Country": "United States",
+    "Title": "B.Sc",
+    "Degree": "Bachelor of Arts",
+    "Year_of_graduation": "2008"
+  }
+
+]
