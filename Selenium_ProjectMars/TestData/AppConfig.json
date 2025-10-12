@@ -1,0 +1,9 @@
+{
+  "Url": "http://localhost:5003/",
+  "Report": {
+    "Path": "Reports/TestReport.html",
+    "Title": "Automation Report",
+    "Name": "Selenium NUnit Tests"
+  }
+
+}
